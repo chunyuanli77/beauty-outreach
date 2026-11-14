@@ -1,0 +1,90 @@
+:root{color-scheme:light dark;--bg:light-dark(#f3f6f8,#121b23);--surface:light-dark(#fff,#1c2731);--ink:light-dark(#192935,#eaf2f8);--muted:light-dark(#516574,#afc0cc);--line:light-dark(#d8e2e8,#3c4c57);--accent:light-dark(#076754,#8de1c6);--button-ink:light-dark(#fff,#132e26);--notice:light-dark(#e6f4ed,#233d35);--error:light-dark(#9d2941,#ffb6c2);--error-bg:light-dark(#fbeaf0,#442b39);font-family:Inter,"Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button,input,select,textarea{border:1px solid var(--line);border-radius:7px;padding:7px 11px;background:var(--surface)}
+button{cursor:pointer;min-height:36px}
+button:disabled{opacity:.6;cursor:default}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--button-ink)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(1.5rem,4vw,2rem);letter-spacing:-.025em}
+h2{font-size:1.05rem}
+h3{font-size:.95rem}
+p{color:var(--muted);line-height:1.5}
+.container{width:min(1100px,100%);margin:0 auto;padding-inline:24px}
+.masthead{background:#172c3b;color:#e7f1f7}
+.masthead-inner{min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600}
+.environment{font-size:.82rem;color:#a4daca;font-weight:500}
+main{display:grid;gap:18px;padding-block:25px 36px}
+.heading,.actions,.paging{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.heading{justify-content:space-between}
+.heading p{margin-top:4px;font-size:.9rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
+.import-panel{display:grid;gap:10px;padding:15px 18px}
+.import-panel form{display:grid;gap:5px}
+label,#import-help,.paging{font-size:.88rem}
+input[type=file]{max-width:100%;min-width:0}
+.message{margin-top:3px;background:var(--notice);border-radius:7px;padding:8px 10px;font-size:.89rem;color:var(--ink)}
+.error{color:var(--error);background:var(--error-bg)}
+.toolbar,.paging{padding:12px 16px}
+.records>.message{margin:0 16px 9px}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.89rem}
+th,td{padding:9px 12px;text-align:left;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);background:var(--bg);font-size:.79rem;white-space:nowrap}
+td:first-child{width:45%;overflow-wrap:anywhere}
+td:nth-child(3){font-variant-numeric:tabular-nums}
+td p{margin-top:2px;font-size:.81rem;white-space:pre-wrap}
+td button{min-height:30px}
+.check{display:flex;gap:5px;align-items:center;white-space:nowrap}
+.check input{accent-color:var(--accent)}
+.paging{justify-content:flex-end}
+dialog{width:min(94vw,510px);max-height:88vh;overflow:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:20px}
+dialog::backdrop{background:#071e32a6}
+dialog p,dialog ul,dialog form,dialog h3{margin-top:8px;overflow-wrap:anywhere}
+dialog ul{padding-left:1.3rem;margin-bottom:8px}
+dialog label{display:grid;gap:4px}
+#rule-form{display:grid;gap:8px}
+.rule-columns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rule-columns input{min-width:0;width:100%}
+.close{justify-content:flex-end;text-align:right}
+.workbench-brand{font-size:1.02rem;color:inherit;white-space:nowrap;text-decoration:none}
+.workbench-nav{display:flex;gap:4px;flex-wrap:wrap}
+.workbench-nav a{color:#c0d2df;text-decoration:none;padding:7px 10px;border-radius:7px;white-space:nowrap;font-size:.88rem}
+.workbench-nav a:hover,.workbench-nav a[aria-current=page]{color:#fff;background:#2b4658}
+.masthead-inner .environment{white-space:nowrap}
+.button-link{display:inline-flex;align-items:center;min-height:36px;border:1px solid var(--line);border-radius:7px;padding:7px 11px;text-decoration:none;background:var(--surface);color:var(--ink)}
+.button-link.primary{background:var(--accent);border-color:var(--accent);color:var(--button-ink)}
+.button-link:hover,button:hover:enabled{border-color:var(--accent)}
+.stack{display:grid;gap:10px;min-width:0}
+.panel-body{padding:14px 16px}
+.workbench-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+.workbench-form{display:grid;gap:9px}
+.workbench-form label{display:grid;gap:4px}
+.workbench-form input,.workbench-form select,.workbench-form textarea{min-width:0;max-width:100%}
+.workbench-form textarea{resize:vertical}
+.workbench-table td:first-child{width:auto}
+.workbench-table td{overflow-wrap:anywhere}
+.workbench-table .numeric{font-variant-numeric:tabular-nums;white-space:nowrap}
+.attempt-dialog{width:min(94vw,620px)}
+.semantic-fields{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 12px;margin:8px 0;font-size:.89rem}
+.semantic-fields dt{color:var(--muted)}
+.semantic-fields dd{margin:0;overflow-wrap:anywhere}
+#semantic-evidence:empty{display:none}
+#semantic-detail-title{margin:0}
+#task-stats{margin-top:8px}
+#task-dispatch-summary{margin-top:8px}
+#attempt-rows tr[data-focused]{background:var(--notice)}
+#attempt-rows details code{display:block;max-width:28ch;overflow-wrap:anywhere}
+#task-draft-form{gap:13px}
+.workbench-note{font-size:.85rem}
+.workbench-preview{padding:9px 11px;border-radius:8px;background:var(--bg);white-space:pre-wrap;overflow-wrap:anywhere}
+.workbench-status{display:inline-block;padding:3px 7px;border-radius:6px;font-size:.82rem;color:var(--ink);background:var(--bg)}
+.workbench-status[data-status=DELIVERED],.workbench-status[data-status=COMPLETED]{background:var(--notice);color:var(--accent)}
+.workbench-status[data-status=FAILED],.workbench-status[data-status=SKIPPED]{background:var(--error-bg);color:var(--error)}
+.workbench-status[data-status=UNCERTAIN],.workbench-status[data-status=PAUSED],.workbench-status[data-status=RETRY]{background:light-dark(#fff0d8,#45331e);color:light-dark(#7c4c0c,#f0c582)}
+@media(max-width:760px){.workbench-grid{grid-template-columns:1fr}.masthead-inner{flex-wrap:wrap;padding-block:10px}.workbench-nav{order:1;width:100%}.workbench-nav a{padding:7px 8px}}
+@media(max-width:600px){.container{padding-inline:12px}main{padding-top:15px}.import-panel,.toolbar{padding-inline:10px}td,th{padding-inline:7px}.rule-columns{grid-template-columns:1fr}}

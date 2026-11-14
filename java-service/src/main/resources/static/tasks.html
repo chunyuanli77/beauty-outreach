@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>批量任务 · 触达工作台</title>
+  <link rel="icon" href="/workbench-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/leads.css">
+  <script type="module" src="/tasks.js"></script>
+</head>
+<body>
+  <header class="masthead"><div class="container masthead-inner">
+    <a class="workbench-brand" href="/">触达工作台</a>
+    <nav class="workbench-nav" aria-label="工作台导航">
+      <a href="/">线索与入池</a><a href="/tasks.html" aria-current="page">批量任务</a>
+      <a href="/audit.html">审计记录</a><a href="/settings.html">模板与频控</a>
+    </nav>
+    <span class="environment">WhatsApp Mock</span>
+  </div></header>
+
+  <main class="container">
+    <div class="heading">
+      <div><h1 id="task-title">批量任务</h1><p id="task-subtitle">查看草稿、执行进度和模拟结果。</p></div>
+      <div class="actions">
+        <a class="button-link" id="task-list-link" href="/tasks.html" hidden>任务列表</a>
+        <a class="button-link" id="task-audit" hidden>查看审计</a>
+        <a class="button-link primary" id="new-task" href="/tasks.html?new=1">新建草稿</a>
+        <button id="refresh-task" type="button" hidden>刷新状态</button>
+        <button id="start-task" type="button" class="primary" hidden>启动模拟发送</button>
+        <button id="pause-task" type="button" hidden>暂停</button>
+        <button id="resume-task" type="button" class="primary" hidden>恢复发送</button>
+      </div>
+    </div>
+    <p class="message" id="task-feedback" role="status" hidden></p>
+    <p class="message error" id="task-error" role="alert" hidden></p>
+
+    <section id="task-list" class="panel records" aria-label="任务列表" hidden>
+      <p class="message" id="task-list-empty" role="status" hidden></p>
+      <div class="table-scroll"><table class="workbench-table">
+        <thead><tr><th scope="col">任务</th><th scope="col">状态</th><th scope="col">模板</th><th scope="col">创建时间</th></tr></thead>
+        <tbody id="task-list-rows"></tbody>
+      </table></div>
+    </section>
+
+    <section id="task-draft" class="panel import-panel" aria-label="创建批量任务" hidden>
+      <form id="task-draft-form">
+        <div class="rule-columns">
+          <label>任务名称<input id="task-name" name="name" maxlength="120" value="美容仪体验问候" required></label>
+          <label>问候模板<select id="task-template" name="templateId" required></select></label>
+        </div>
+        <p id="template-help"><a href="/settings.html">管理问候模板</a></p>
+        <div class="heading"><h2>消息预览</h2><p>服务端在保存草稿时核验触达资格并记录拦截原因。</p></div>
+        <p id="message-preview" class="message">选择模板和目标后可预览。</p>
+        <div class="heading">
+          <div><h2>目标池</h2><p id="draft-count" aria-live="polite">已选 0 条</p></div>
+          <div class="actions"><button type="button" id="select-targets">全选目标</button><button type="button" id="clear-targets">取消全选</button></div>
+        </div>
+        <p id="draft-empty" hidden>当前目标池为空。<a href="/">前往线索与入池</a></p>
+        <div class="table-scroll" id="draft-table"><table class="workbench-table">
+          <thead><tr><th scope="col">目标</th><th scope="col">地区／语言</th><th scope="col">评分</th></tr></thead>
+          <tbody id="draft-targets"></tbody>
+        </table></div>
+        <details><summary>请求幂等键</summary><code id="idempotency-key"></code></details>
+        <p class="message error" id="draft-error" role="alert" hidden></p>
+        <div class="actions"><button class="primary" type="submit" id="save-draft" disabled>保存草稿</button></div>
+      </form>
+    </section>
+
+    <section id="task-detail" class="panel records" aria-label="任务详情" hidden>
+      <div class="toolbar"><h2>结果统计</h2><p id="task-status" aria-live="polite"></p><div id="task-stats" class="actions"></div><p id="task-dispatch-summary" class="workbench-note" hidden></p></div>
+      <div class="table-scroll"><table class="workbench-table">
+        <thead><tr><th scope="col">目标／联系人</th><th scope="col">状态／原因</th><th scope="col">尝试／重试</th><th scope="col">操作</th></tr></thead>
+        <tbody id="task-target-rows"></tbody>
+      </table></div>
+    </section>
+  </main>
+
+  <dialog class="attempt-dialog" id="target-details" aria-labelledby="target-title">
+    <h2 id="target-title">发送明细</h2>
+    <p id="target-status"></p><p id="target-retry"></p>
+    <h3>消息快照</h3><p id="target-message" class="message"></p>
+    <h3>尝试记录</h3><p id="target-position" class="message" role="status" hidden></p><p id="no-attempts" hidden>暂无发送尝试。</p>
+    <div id="attempt-table" class="table-scroll"><table class="workbench-table">
+      <thead><tr><th scope="col">次数</th><th scope="col">时间</th><th scope="col">结果</th><th scope="col">消息与草稿</th><th scope="col">审计</th></tr></thead>
+      <tbody id="attempt-rows"></tbody>
+    </table></div>
+    <p id="message-proof-help" class="workbench-note" hidden>「与草稿一致」表示 Mock 收到的正文与上方消息快照相同。送达结果请看目标状态。</p>
+    <form class="actions close" method="dialog"><a id="target-audit">查看该目标全部审计</a><button autofocus>关闭</button></form>
+  </dialog>
+</body>
+</html>

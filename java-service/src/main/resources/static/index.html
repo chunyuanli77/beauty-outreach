@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram 线索工作台</title>
+  <link rel="icon" href="/workbench-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/leads.css">
+  <script type="module" src="/leads.js"></script>
+</head>
+<body>
+  <header class="masthead"><div class="container masthead-inner"><a class="workbench-brand" href="/">触达工作台</a><nav class="workbench-nav" aria-label="工作台导航"><a href="/" aria-current="page">线索与入池</a><a href="/tasks.html">批量任务</a><a href="/audit.html">审计记录</a><a href="/settings.html">模板与频控</a></nav><span class="environment">WhatsApp Mock</span></div></header>
+  <main class="container">
+    <div class="heading">
+      <div><h1>Instagram 线索</h1><p>导入有权处理的线索，按规则评分并确认目标池。</p></div>
+      <div class="actions"><button id="open-rules" type="button" disabled>评分规则</button><button id="score" class="primary" type="button" disabled>重新评分</button><a class="button-link" href="/tasks.html?new=1">创建批量任务</a></div>
+    </div>
+
+    <section class="panel import-panel" aria-labelledby="import-title">
+      <div class="heading"><h2 id="import-title">导入线索</h2><a id="csv-template" download="instagram-leads.csv">下载 CSV 表头</a></div>
+      <form id="import-form">
+        <label for="lead-file">选择 CSV 或 JSON 文件</label>
+        <div class="actions"><input id="lead-file" name="leads" type="file" accept=".csv,.json" required aria-describedby="import-help"><button type="submit" class="primary" disabled>导入到数据库</button></div>
+      </form>
+      <p id="import-help">UTF-8，每批 1–500 条。必填 <code>username</code>、<code>source_url</code>。电话号码和 WhatsApp 联系许可不会从文件导入。</p>
+      <p class="message" id="import-status" role="status" hidden></p>
+      <p class="message error" id="import-error" role="alert" hidden></p>
+    </section>
+
+    <section class="panel import-panel" aria-labelledby="semantic-title">
+      <div class="heading">
+        <div><h2 id="semantic-title">DeepSeek 语义筛选</h2><p id="semantic-config" role="status">正在读取配置…</p></div>
+        <div class="actions">
+          <button id="semantic-mode" type="button" hidden></button>
+          <button id="semantic-batch" class="primary" type="button" disabled>分析已选线索</button>
+          <button id="semantic-retry" type="button" hidden>重试失败项</button>
+          <button id="semantic-refresh" type="button">刷新分析状态</button>
+        </div>
+      </div>
+      <p id="semantic-scope">分析仅可用于本机已登记的合成简介。选择线索后手动提交，每批最多 50 条。</p>
+      <p class="message" id="semantic-progress" role="status" hidden></p>
+      <p class="message error" id="semantic-error" role="alert" hidden></p>
+    </section>
+
+    <section class="panel records" aria-labelledby="records-title">
+      <div class="heading toolbar">
+        <div><h2 id="records-title">线索列表</h2><p id="lead-count" aria-live="polite"></p></div>
+        <div class="actions"><input type="search" id="lead-search" aria-label="搜索用户名或简介" placeholder="搜索用户名或简介"><label class="check"><input type="checkbox" id="pool-only">仅看目标池</label><label for="semantic-filter">语义筛选</label><select id="semantic-filter"><option value="">全部</option><option value="ALLOWED">可分析的合成线索</option><option value="REVIEW">待人工复核</option><option value="STRONG">高相关</option><option value="EXCLUDE">排除</option><option value="FAILED">分析失败</option></select><button id="reload-leads" type="button" hidden>重新加载</button></div>
+      </div>
+      <p id="record-status" class="message" role="status" hidden></p>
+      <p id="record-error" class="message error" role="alert" hidden></p>
+      <div class="table-scroll"><table>
+        <thead><tr><th scope="col">账号与简介</th><th scope="col">地区／语言</th><th scope="col">规则分</th><th scope="col">语义筛选</th><th scope="col">目标池</th><th scope="col">操作</th></tr></thead>
+        <tbody id="lead-rows"></tbody>
+      </table></div>
+      <div class="paging" id="paging" hidden><button id="previous" type="button">上一页</button><span id="page-number"></span><button id="next" type="button">下一页</button></div>
+    </section>
+  </main>
+
+  <dialog id="lead-details" aria-labelledby="detail-title">
+    <h2 id="detail-title"></h2>
+    <p id="detail-bio"></p><p id="detail-score"></p>
+    <h3>规则评分依据</h3>
+    <ul id="detail-hits"></ul>
+    <section aria-labelledby="semantic-detail-title">
+      <div class="heading"><h3 id="semantic-detail-title">语义判断</h3><button id="semantic-single" type="button" disabled>分析此线索</button></div>
+      <p id="semantic-detail-status" role="status"></p>
+      <dl id="semantic-detail-fields" class="semantic-fields" hidden></dl>
+      <ul id="semantic-evidence" aria-label="简介原文摘录"></ul>
+    </section>
+    <h3>来源链接</h3><ul id="detail-sources"></ul>
+    <form id="decision-form">
+      <label for="lead-decision">目标池决定</label>
+      <div class="actions"><select id="lead-decision"><option value="AUTO">按当前筛选模式</option><option value="APPROVE">人工确认入池</option><option value="REJECT">人工拒绝</option></select><button class="primary" type="submit">保存决定</button></div>
+    </form>
+    <p id="decision-error" class="message error" role="alert" hidden></p>
+    <h3>WhatsApp Mock 联系人</h3>
+    <p id="contact-state" role="status"></p>
+    <form id="contact-form" hidden>
+      <label>合成联系标识<input name="contactKey" placeholder="MOCK-DEMO-01" pattern="MOCK-[A-Z0-9\-]{1,48}" maxlength="53" autocomplete="off" required></label>
+      <label>模拟发送结果<select name="mockScenario"><option value="SUCCESS">模拟送达</option><option value="TRANSIENT">暂时失败后送达</option><option value="TRANSIENT_ALWAYS">持续暂时失败</option><option value="PERMANENT">永久失败</option><option value="UNCERTAIN">结果待核对</option></select></label>
+      <label class="check"><input type="checkbox" name="authorized">允许本地 Mock 问候</label>
+      <button type="submit" class="primary">保存合成联系人</button>
+    </form>
+    <div id="contact-actions" class="actions" hidden>
+      <button id="authorize-contact" type="button">授予 Mock 授权</button>
+      <button id="unsubscribe-contact" type="button">标记退订</button>
+    </div>
+    <button id="reload-contact" type="button" hidden>重新读取联系人</button>
+    <p id="contact-error" class="message error" role="alert" hidden></p>
+    <form method="dialog" class="close"><button>关闭</button></form>
+  </dialog>
+
+  <dialog id="rule-details" aria-labelledby="rule-title">
+    <h2 id="rule-title">评分规则</h2><p>每类命中只计一次。词条用逗号或换行分隔，保存后重新评分。</p>
+    <form id="rule-form">
+      <label>核心词（+60）<textarea name="core" rows="2"></textarea></label>
+      <label>意向词（+25）<textarea name="intent" rows="2"></textarea></label>
+      <label>排除词（−40）<textarea name="exclude" rows="3"></textarea></label>
+      <div class="rule-columns"><label>地区偏好<input name="regions"></label><label>语言偏好<input name="languages"></label></div>
+      <p class="workbench-note">地区与语言偏好默认留空。已有商品与意向匹配且偏好全部满足时加 15 分。触达仍需独立授权。</p>
+      <label>自动入池阈值<input type="number" name="threshold" min="0" max="100" required></label>
+      <p id="rule-error" class="message error" role="alert" hidden></p>
+      <div class="actions close"><button type="submit" class="primary">保存规则</button><button type="submit" formmethod="dialog" formnovalidate>关闭</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

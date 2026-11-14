@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>审计记录｜触达工作台</title>
+  <link rel="icon" href="/workbench-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/leads.css">
+  <script type="module" src="/audit.js"></script>
+</head>
+<body>
+  <header class="masthead"><div class="container masthead-inner">
+    <a class="workbench-brand" href="/">触达工作台</a>
+    <nav class="workbench-nav" aria-label="工作台导航">
+      <a href="/">线索与入池</a><a href="/tasks.html">批量任务</a>
+      <a href="/audit.html" aria-current="page">审计记录</a><a href="/settings.html">模板与频控</a>
+    </nav>
+    <span class="environment">WhatsApp Mock</span>
+  </div></header>
+  <main class="container">
+    <div class="heading">
+      <h1>审计记录</h1>
+      <a class="button-link" id="audit-task-link" hidden>返回任务详情</a>
+    </div>
+    <section class="panel import-panel" aria-labelledby="audit-filter-title">
+      <h2 id="audit-filter-title">查询条件</h2>
+      <form id="audit-filters">
+        <div class="actions">
+          <label for="audit-task">任务编号</label>
+          <input id="audit-task" name="taskId" inputmode="numeric" pattern="[1-9][0-9]*" size="13" list="audit-task-options" placeholder="全部任务">
+          <datalist id="audit-task-options"></datalist>
+          <label for="audit-lead">线索编号</label>
+          <input id="audit-lead" name="leadId" inputmode="numeric" pattern="[1-9][0-9]*" size="13" placeholder="全部线索">
+          <label for="audit-attempt">第几次尝试</label>
+          <input id="audit-attempt" name="attemptNo" inputmode="numeric" pattern="[1-3]" size="6" placeholder="全部">
+          <label for="audit-action">事件类型</label>
+          <select id="audit-action" name="action"><option value="">全部事件</option></select>
+        </div>
+        <div class="actions" aria-describedby="audit-time-help">
+          <label for="audit-since">开始时间</label>
+          <input id="audit-since" name="since" type="datetime-local" step="1">
+          <label for="audit-until">结束时间</label>
+          <input id="audit-until" name="until" type="datetime-local" step="1">
+          <button type="submit" class="primary">查询</button>
+          <button id="audit-clear" type="button">清除筛选</button>
+        </div>
+        <p id="audit-time-help">时间按北京时间（UTC+8）显示和查询。</p>
+      </form>
+    </section>
+    <section class="panel records" aria-labelledby="audit-results-title">
+      <div class="heading toolbar"><div><h2 id="audit-results-title">事件列表</h2><p>在发送事件所在行点击任务名，可定位到该目标的发送明细。</p></div></div>
+      <p class="message" id="audit-status" role="status" hidden></p>
+      <p class="message error" id="audit-error" role="alert" hidden></p>
+      <div class="table-scroll" id="audit-results" aria-busy="false">
+        <table class="workbench-table" aria-labelledby="audit-results-title">
+          <thead><tr><th scope="col">时间</th><th scope="col">事件</th><th scope="col">任务</th><th scope="col">线索编号</th><th scope="col">操作者</th><th scope="col">原因／结果</th></tr></thead>
+          <tbody id="audit-rows"></tbody>
+        </table>
+      </div>
+      <div class="paging" id="audit-pagination" hidden><button type="button" id="audit-more">加载更早记录</button></div>
+    </section>
+  </main>
+</body>
+</html>

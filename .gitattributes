@@ -1,0 +1,4 @@
+/scripts/semantic-fresh.json text eol=lf
+/python-service/scoring_service/main.py text eol=lf
+/python-service/scoring_service/semantic.py text eol=lf
+/java-service/src/main/resources/schema.sql text eol=lf

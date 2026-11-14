@@ -1,0 +1,14 @@
+java-service/target/
+java-service/data/
+python-service/.venv/
+**/__pycache__/
+**/.pytest_cache/
+.env
+.env.*
+!.env.example
+.local-secrets/
+*.key
+*.pem
+*.mv.db
+*.trace.db
+*.log
