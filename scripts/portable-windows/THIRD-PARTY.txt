@@ -1,0 +1,14 @@
+Java
+  The Java image was generated with jlink from the JDK identified in BUILD-INFO.txt.
+  Runtime notices and licenses: runtime/java/legal/ and runtime/java/NOTICE if supplied.
+  Exact vendor, version, and source revision: runtime/java/original-jdk-release.txt.
+  For Eclipse Temurin, see https://github.com/adoptium/temurin21-binaries/releases
+  and the SOURCE_REPO/SOURCE fields in the original release metadata.
+
+Python
+  The bundle includes standalone CPython. See BUILD-INFO.txt for its version.
+  License: runtime/python/LICENSE.txt. Dependency licenses are in package
+  metadata under runtime/python/Lib/site-packages/.
+  https://github.com/astral-sh/python-build-standalone
+
+Java application dependencies keep their notices in the application JAR and its nested libraries.

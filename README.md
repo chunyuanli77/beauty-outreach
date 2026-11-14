@@ -46,3 +46,22 @@ $records | ConvertTo-Json -AsArray -Depth 3 | Set-Content -Encoding UTF8 .\java-
 ```
 
 上传生成的 `profiles.json`，选择线索提交语义分析。在工作台切换到 DeepSeek 筛选模式可查看该模式下的入池结果。传入 `-AutoEnabled` 启用有效强候选的自动入池。脚本支持通过 `-JavaPort` 和 `-PythonPort` 设置其他端口。导入文件生成命令使用 PowerShell 7。
+
+## Windows x64 便携包
+
+已构建的便携 ZIP 可在没有开发环境的 Windows x64 电脑上运行。完整解压后双击 `Start-Workbench.cmd`，浏览器会打开工作台。需要 DeepSeek 时用 `Start-DeepSeek.cmd`，按提示输入自己的 API Key。应用数据库保存在解压目录的 `data/`。
+
+重新构建需要 Windows x64、JDK 21、Maven、uv 和解压后的独立 CPython 3.12 x64。用 PowerShell 7 从仓库根目录运行：
+
+```powershell
+.\scripts\build-windows-portable.ps1 -PythonRuntime 'D:\tools\python-standalone' -OutputDirectory 'D:\outreach-release'
+```
+
+该脚本生成 ZIP 与 SHA-256 校验文件。构建产物放在仓库外。
+
+## 项目 Codex 技能
+
+- [ponytail](.agents/skills/ponytail/SKILL.md) 和 [ponytail-review](.agents/skills/ponytail-review/SKILL.md) 用于实现与复审。
+- [outreach-requirements](.agents/skills/outreach-requirements/SKILL.md) 从任务书或 PRD 产出带验收口径的实施计划，文中给出了原先使用的 Compound Engineering 安装入口。
+- [outreach-local-check](.agents/skills/outreach-local-check/SKILL.md) 用于健康检查、隔离启动和最小业务验收。
+- [outreach-windows-release](.agents/skills/outreach-windows-release/SKILL.md) 用于重建和查验 Windows x64 便携包。
