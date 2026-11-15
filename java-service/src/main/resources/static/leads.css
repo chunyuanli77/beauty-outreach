@@ -219,6 +219,7 @@ dialog input, dialog textarea, dialog select { min-width: 0; max-width: 100%; }
 #semantic-detail-title { margin: 0; }
 #task-stats, #task-dispatch-summary { margin-top: 8px; }
 #attempt-rows tr[data-focused] { background: var(--accent-ring); }
+#attempt-rows td:nth-child(3), #attempt-rows td:last-child a { white-space: nowrap; }
 #attempt-rows details code { display: block; max-width: 28ch; overflow-wrap: anywhere; }
 #task-draft-form { gap: 13px; }
 #task-draft-form .table-scroll { border: 1px solid var(--line); border-radius: 11px; }

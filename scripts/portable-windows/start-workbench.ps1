@@ -138,8 +138,9 @@ try {
     Write-Host "Workbench: $base/"
     Write-Host "Scoring service: $score/"
     Write-Host 'Keep this window open. Press Ctrl+C here to stop both services.'
+    Write-Host "If the browser does not open, paste $base/ into its address bar on this PC. Keep http://."
     if (-not $NoBrowser) {
-        try { Start-Process "$base/" } catch { Write-Host 'Open the workbench URL in a browser.' }
+        try { Start-Process "$base/" } catch { Write-Host 'Automatic browser launch failed. Use the printed Workbench address.' }
     }
     while (-not $javaProcess.HasExited -and -not $pythonProcess.HasExited) { Start-Sleep -Milliseconds 500 }
     throw 'One of the workbench services stopped.'

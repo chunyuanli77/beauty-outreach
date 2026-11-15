@@ -1,4 +1,5 @@
 java-service/target/
+frontend/node_modules/
 java-service/data/
 python-service/.venv/
 **/__pycache__/

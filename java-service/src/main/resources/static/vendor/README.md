@@ -7,4 +7,4 @@ This directory contains the unmodified production browser ESM runtime and MIT li
 
 Runtime SHA-256: `6bf54d9c68491a70bc8a2ab3748d330ef8306ea8fcea9647a27a224c650e9c71`.
 
-The app uses render functions and serves the runtime locally. Update the runtime, license, checksum, and the version in `scripts/portable-windows/THIRD-PARTY.txt` together when changing versions.
+The app uses templates compiled at build time and serves the runtime locally. When upgrading, unify the version in `frontend/package.json`, its lock file, this asset and checksum, and `scripts/portable-windows/THIRD-PARTY.txt`, then rebuild the front end.

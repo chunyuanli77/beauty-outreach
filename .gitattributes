@@ -3,3 +3,4 @@
 /python-service/scoring_service/semantic.py text eol=lf
 /java-service/src/main/resources/schema.sql text eol=lf
 /java-service/src/main/resources/static/vendor/vue.runtime.esm-browser.prod.js -text
+/java-service/src/main/resources/static/vue/*.js text eol=lf

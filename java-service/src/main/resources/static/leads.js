@@ -1,7 +1,7 @@
 import {parseLeadFile} from './lead-file.js';
 import {api, node, reasonLabel, show} from './workbench.js';
 import {initSemantic} from './semantic-ui.js';
-import {createApp, h, shallowRef} from './vendor/vue.runtime.esm-browser.prod.js';
+import {mountLeadViews} from './vue/leads.js';
 
 const byId = (id) => document.getElementById(id);
 const importForm = byId('import-form');
@@ -25,34 +25,13 @@ let mutating = false;
 let contact;
 let contactRequest = 0;
 const semantic = initSemantic({renderLeads, reloadLeads, currentLead: () => detailDialog.open ? activeLead : null});
-const leadView = shallowRef({items: [], empty: '正在加载线索…'});
-const metricLabels = ['已导入线索', '当前目标池', '待规则评分'];
-
-createApp({render: () => h('dl', {class: 'overview-metrics', 'aria-live': 'polite'},
-  metricLabels.map((label, index) => h('div', {class: 'overview-item', key: label}, [
-    h('dt', {class: 'overview-label'}, label),
-    h('dd', {class: 'overview-value'}, leadView.value.metrics?.[index] ?? '—')
-  ])))}).mount('#lead-overview');
-
-createApp({render: () => leadView.value.items.length
-  ? leadView.value.items.map(({lead, analysis}) => h('tr', {key: lead.id}, [
-    h('td', [h('strong', {class: 'lead-row-name'}, lead.username), h('p', {class: 'lead-row-bio'}, lead.bio)]),
-    h('td', `${lead.region || '—'} / ${lead.language || '—'}`),
-    h('td', [h('span', {class: 'lead-score'}, scoreLabel(lead))]),
-    h('td', [analysis.selectable && h('label', {class: 'check'}, [
-      h('input', {type: 'checkbox', checked: analysis.checked, 'aria-label': `选择 ${lead.username} 进行语义分析`,
-        onChange: event => {
-          const check = event.currentTarget;
-          if (semantic.setSelection(lead.id, check.checked)) renderLeads();
-          else check.checked = false;
-        }}),
-      h('span', '选择')
-    ]), h('p', analysis.label)]),
-    h('td', [h('span', {class: 'pool-status', 'data-status': lead.selected ? 'selected'
-      : lead.manual_decision === 'REJECT' ? 'rejected' : 'idle'}, selectionLabel(lead))]),
-    h('td', [h('button', {type: 'button', 'aria-label': `查看 ${lead.username} 的详情`, onClick: () => openLead(lead)}, '详情')])
-  ])) : h('tr', [h('td', {colspan: 6, class: 'lead-empty'}, leadView.value.empty)])
-}).mount('#lead-rows');
+const leadView = mountLeadViews({
+  onOpenLead: openLead,
+  onSelectionChange(leadId, input) {
+    if (semantic.setSelection(leadId, input.checked)) renderLeads();
+    else input.checked = false;
+  }
+});
 
 function normalized(value) {
   return value.normalize('NFKC').trim().toLowerCase();
@@ -100,7 +79,9 @@ function renderLeads() {
   byId('page-number').textContent = `第 ${currentPage + 1} / ${pages} 页`;
   leadView.value = {
     metrics: [leads.length, selected, awaitingScore],
-    items: matches.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map(lead => ({lead, analysis: semantic.rowState(lead)})),
+    items: matches.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map(lead => ({
+      lead, analysis: semantic.rowState(lead), score: scoreLabel(lead), selection: selectionLabel(lead)
+    })),
     empty: leads.length ? '没有匹配的线索。' : '数据库中暂无线索。'
   };
 }

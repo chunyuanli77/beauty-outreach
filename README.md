@@ -2,7 +2,9 @@
 
 本地工作台支持导入 Instagram 线索、规则评分、DeepSeek 语义筛选、人工复核、联系人授权、批量模拟派发和审计。Java 21 / Spring Boot 提供工作台与业务接口，Python 3.12 / FastAPI 负责评分，H2 在本机保存数据。
 
-工作台的线索概况、线索列表和模板与频控设置使用 Vue 3。前端资源由 Spring Boot 同源提供，`mvn package` 会一并打入 JAR，无需安装 Node 或联网加载前端资源。前端入口在 [`static/`](java-service/src/main/resources/static/)，Vue 运行时的版本与来源见 [依赖说明](java-service/src/main/resources/static/vendor/README.md)。
+**Vue 3 源码在仓库根目录 [`frontend/src/`](frontend/src/)**：[线索概况](frontend/src/LeadOverview.vue)、[线索列表](frontend/src/LeadList.vue)、[模板与频控](frontend/src/Settings.vue) 均为带 `<template>` 的 Vue 组件。只有修改组件并重新构建时需要 Node；日常使用与 Maven 打包直接使用仓库中预编译的资源。见 [前端开发](frontend/README.md)。
+
+**评审下载：** 从 [GitHub Releases](https://github.com/chunyuanli77/beauty-outreach/releases) 下载同版本的 Windows x64 便携包与独立评审资料。资料包含数据模型、Mock 样例与演示步骤、测试证据、合规说明和十分钟讲稿。
 
 ## 本地启动
 
@@ -52,6 +54,8 @@ $records | ConvertTo-Json -AsArray -Depth 3 | Set-Content -Encoding UTF8 .\java-
 ## Windows x64 便携包
 
 已构建的便携 ZIP 可在没有开发环境的 Windows x64 电脑上运行。完整解压后双击 `Start-Workbench.cmd`，浏览器会打开工作台。需要 DeepSeek 时用 `Start-DeepSeek.cmd`，按提示输入自己的 API Key。应用数据库保存在解压目录的 `data/`。
+
+浏览器未自动打开时，把启动窗口打印的 `Workbench:` 地址完整粘贴到这台电脑的浏览器地址栏，保留 `http://`。端口占用时程序会选空闲端口；运行期间请保持启动窗口打开。从另一台电脑使用时，需要在那台电脑上解压并启动一份。
 
 重新构建需要 Windows x64、JDK 21、Maven、uv 和解压后的独立 CPython 3.12 x64。用 PowerShell 7 从仓库根目录运行：
 

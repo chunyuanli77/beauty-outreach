@@ -119,7 +119,7 @@ $records = foreach ($profile in $profiles) {
 }
 $importFile = ConvertTo-Json -InputObject @($records) -Depth 3
 [IO.File]::WriteAllText((Join-Path $bundle 'sample-leads.json'), $importFile + [Environment]::NewLine, $utf)
-$commit = & git -C $root rev-parse --short HEAD
+$commit = & git -C $root rev-parse --verify HEAD
 if ($LASTEXITCODE -ne 0) { $commit = 'unknown' }
 elseif ((& git -C $root status --porcelain)) { $commit += ' (working tree had changes at build time)' }
 $runtimeMeta = @("Source commit: $commit", "Java: $($release.JAVA_VERSION) / $($release.IMPLEMENTOR) / $($release.OS_ARCH)", "Python: $pythonInfo")
