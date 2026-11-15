@@ -92,6 +92,16 @@ Get-ChildItem -LiteralPath (Join-Path $python 'Lib') -Force | Where-Object Name 
 Get-ChildItem -LiteralPath (Join-Path $pythonBuild '.venv/Lib/site-packages') -Force |
     Where-Object Name -notin @('_virtualenv.pth','_virtualenv.py') |
     ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $sitePackages -Recurse }
+# Bytecode caches from the development runtime are not needed in the portable bundle.
+$runtimeRoot = (Resolve-Path -LiteralPath $pythonTarget).ProviderPath.TrimEnd('\') + '\'
+foreach ($cache in Get-ChildItem -LiteralPath $pythonTarget -Directory -Filter '__pycache__' -Recurse -Force) {
+    $cachePath = (Resolve-Path -LiteralPath $cache.FullName).ProviderPath
+    if (-not $cachePath.StartsWith($runtimeRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Python cache outside bundle staging directory.' }
+    Remove-Item -LiteralPath $cachePath -Recurse -Force
+}
+$bytecode = Get-ChildItem -LiteralPath $pythonTarget -File -Recurse -Force | Where-Object Extension -in @('.pyc','.pyo')
+foreach ($file in $bytecode) { Remove-Item -LiteralPath $file.FullName -Force }
+
 $app = Join-Path $bundle 'app'
 $scorer = Join-Path $root 'python-service/scoring_service'
 foreach ($nameOfFile in @('__init__.py','main.py','semantic.py')) {
