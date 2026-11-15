@@ -1,12 +1,12 @@
 import {parseLeadFile} from './lead-file.js';
 import {api, node, reasonLabel, show} from './workbench.js';
 import {initSemantic} from './semantic-ui.js';
+import {createApp, h, shallowRef} from './vendor/vue.runtime.esm-browser.prod.js';
 
 const byId = (id) => document.getElementById(id);
 const importForm = byId('import-form');
 const fileInput = byId('lead-file');
 const importButton = importForm.querySelector('button');
-const rows = byId('lead-rows');
 const search = byId('lead-search');
 const pool = byId('pool-only');
 const ruleForm = byId('rule-form');
@@ -25,6 +25,34 @@ let mutating = false;
 let contact;
 let contactRequest = 0;
 const semantic = initSemantic({renderLeads, reloadLeads, currentLead: () => detailDialog.open ? activeLead : null});
+const leadView = shallowRef({items: [], empty: '正在加载线索…'});
+const metricLabels = ['已导入线索', '当前目标池', '待规则评分'];
+
+createApp({render: () => h('dl', {class: 'overview-metrics', 'aria-live': 'polite'},
+  metricLabels.map((label, index) => h('div', {class: 'overview-item', key: label}, [
+    h('dt', {class: 'overview-label'}, label),
+    h('dd', {class: 'overview-value'}, leadView.value.metrics?.[index] ?? '—')
+  ])))}).mount('#lead-overview');
+
+createApp({render: () => leadView.value.items.length
+  ? leadView.value.items.map(({lead, analysis}) => h('tr', {key: lead.id}, [
+    h('td', [h('strong', {class: 'lead-row-name'}, lead.username), h('p', {class: 'lead-row-bio'}, lead.bio)]),
+    h('td', `${lead.region || '—'} / ${lead.language || '—'}`),
+    h('td', [h('span', {class: 'lead-score'}, scoreLabel(lead))]),
+    h('td', [analysis.selectable && h('label', {class: 'check'}, [
+      h('input', {type: 'checkbox', checked: analysis.checked, 'aria-label': `选择 ${lead.username} 进行语义分析`,
+        onChange: event => {
+          const check = event.currentTarget;
+          if (semantic.setSelection(lead.id, check.checked)) renderLeads();
+          else check.checked = false;
+        }}),
+      h('span', '选择')
+    ]), h('p', analysis.label)]),
+    h('td', [h('span', {class: 'pool-status', 'data-status': lead.selected ? 'selected'
+      : lead.manual_decision === 'REJECT' ? 'rejected' : 'idle'}, selectionLabel(lead))]),
+    h('td', [h('button', {type: 'button', 'aria-label': `查看 ${lead.username} 的详情`, onClick: () => openLead(lead)}, '详情')])
+  ])) : h('tr', [h('td', {colspan: 6, class: 'lead-empty'}, leadView.value.empty)])
+}).mount('#lead-rows');
 
 function normalized(value) {
   return value.normalize('NFKC').trim().toLowerCase();
@@ -63,30 +91,18 @@ function renderLeads() {
     && semantic.matches(lead) && (normalized(lead.username).includes(query) || normalized(lead.bio).includes(query)));
   const pages = Math.max(1, Math.ceil(matches.length / pageSize));
   currentPage = Math.min(currentPage, pages - 1);
-  byId('lead-count').textContent = `${leads.length} 条线索 · ${leads.filter((lead) => lead.selected).length} 条入池 · ${matches.length} 条匹配`;
+  const selected = leads.filter((lead) => lead.selected).length;
+  const awaitingScore = leads.filter(lead => lead.score === null || (rules && lead.rule_version !== rules.version)).length;
+  byId('lead-count').textContent = `${leads.length} 条线索 · ${selected} 条入池 · ${matches.length} 条匹配`;
   byId('paging').hidden = pages === 1;
   byId('previous').disabled = currentPage === 0;
   byId('next').disabled = currentPage === pages - 1;
   byId('page-number').textContent = `第 ${currentPage + 1} / ${pages} 页`;
-  const fragment = document.createDocumentFragment();
-  for (const lead of matches.slice(currentPage * pageSize, (currentPage + 1) * pageSize)) {
-    const row = fragment.appendChild(node('tr'));
-    row.insertCell().append(node('strong', lead.username), node('p', lead.bio));
-    row.insertCell().textContent = `${lead.region || '—'} / ${lead.language || '—'}`;
-    row.insertCell().textContent = scoreLabel(lead);
-    row.insertCell().append(semantic.cell(lead));
-    row.insertCell().textContent = selectionLabel(lead);
-    const detail = row.insertCell().appendChild(node('button', '详情'));
-    detail.type = 'button';
-    detail.setAttribute('aria-label', `查看 ${lead.username} 的详情`);
-    detail.addEventListener('click', () => openLead(lead));
-  }
-  if (!matches.length) {
-    const empty = fragment.appendChild(node('tr')).insertCell();
-    empty.colSpan = 6;
-    empty.textContent = leads.length ? '没有匹配的线索。' : '数据库中暂无线索。';
-  }
-  rows.replaceChildren(fragment);
+  leadView.value = {
+    metrics: [leads.length, selected, awaitingScore],
+    items: matches.slice(currentPage * pageSize, (currentPage + 1) * pageSize).map(lead => ({lead, analysis: semantic.rowState(lead)})),
+    empty: leads.length ? '没有匹配的线索。' : '数据库中暂无线索。'
+  };
 }
 
 async function reloadLeads() {
@@ -330,6 +346,7 @@ function loadWorkbench() {
       renderLeads();
     } catch (error) {
       byId('reload-leads').hidden = false;
+      if (!leadView.value.metrics) leadView.value = {items: [], empty: '暂时无法读取线索，请重新加载。'};
       throw error;
     } finally {
       show('record-status');

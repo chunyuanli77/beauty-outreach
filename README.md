@@ -2,6 +2,8 @@
 
 本地工作台支持导入 Instagram 线索、规则评分、DeepSeek 语义筛选、人工复核、联系人授权、批量模拟派发和审计。Java 21 / Spring Boot 提供工作台与业务接口，Python 3.12 / FastAPI 负责评分，H2 在本机保存数据。
 
+工作台的线索概况、线索列表和模板与频控设置使用 Vue 3。前端资源由 Spring Boot 同源提供，`mvn package` 会一并打入 JAR，无需安装 Node 或联网加载前端资源。前端入口在 [`static/`](java-service/src/main/resources/static/)，Vue 运行时的版本与来源见 [依赖说明](java-service/src/main/resources/static/vendor/README.md)。
+
 ## 本地启动
 
 安装 JDK 21、Maven 3.9+、Python 3.12 和 uv。以下两组命令分别从仓库根目录在两个终端打开。

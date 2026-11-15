@@ -11,35 +11,8 @@
 <body>
   <header class="masthead"><div class="container masthead-inner"><a class="workbench-brand" href="/">触达工作台</a><nav class="workbench-nav" aria-label="工作台导航"><a href="/">线索与入池</a><a href="/tasks.html">批量任务</a><a href="/audit.html">审计记录</a><a href="/settings.html" aria-current="page">模板与频控</a></nav><span class="environment">WhatsApp Mock</span></div></header>
   <main class="container">
-    <div class="heading"><div><h1>模板与频控</h1><p>管理批量任务的问候内容和发送限制。</p></div><a class="button-link" href="/tasks.html?new=1">创建批量任务</a></div>
-    <div class="workbench-grid">
-      <section class="panel panel-body stack" aria-labelledby="templates-title">
-        <h2 id="templates-title">问候模板</h2>
-        <div id="template-list" class="stack"></div>
-        <p class="message error" id="templates-error" role="alert" hidden></p>
-        <form id="template-form" class="workbench-form">
-          <label>模板名称<input id="template-name" name="name" maxlength="100" required></label>
-          <label>问候文案<textarea id="template-body" name="body" rows="4" maxlength="1000" required aria-describedby="template-help"></textarea></label>
-          <p id="template-help" class="workbench-note"><code>{{display_name}}</code> 会替换成用户名。修改内容可另存为新模板。</p>
-          <div class="actions"><button class="primary" type="submit">新增模板</button></div>
-        </form>
-        <p class="message" id="template-status" role="status" hidden></p>
-        <p class="message error" id="template-error" role="alert" hidden></p>
-      </section>
-      <section class="panel panel-body stack" aria-labelledby="frequency-title">
-        <h2 id="frequency-title">全局频控</h2>
-        <form id="frequency-form" class="workbench-form">
-          <label>窗口内最多尝试（次）<input name="globalLimit" type="number" min="1" max="100" required></label>
-          <label>全局窗口（秒）<input name="windowSeconds" type="number" min="1" max="3600" required></label>
-          <label>同一联系人冷却（秒）<input name="cooldownSeconds" type="number" min="0" max="86400" required></label>
-          <label>首次重试间隔（秒）<input name="retrySeconds" type="number" min="1" max="3600" required></label>
-          <p class="workbench-note">保存后适用于所有任务的后续发送尝试。暂时失败最多重试 2 次，仍受全局频控和联系人冷却限制。</p>
-          <div class="actions"><button class="primary" type="submit" disabled>保存频控</button></div>
-        </form>
-        <p class="message" id="frequency-status" role="status" hidden></p>
-        <p class="message error" id="frequency-error" role="alert" hidden></p>
-      </section>
-    </div>
+    <div class="heading page-intro"><div><p class="eyebrow">SETTINGS · 派发设置</p><h1>模板与频控</h1><p>管理批量任务的问候内容和发送限制。</p></div><a class="button-link primary" href="/tasks.html?new=1">创建批量任务</a></div>
+    <div id="settings-app" class="workbench-grid" aria-busy="true"><p class="message" role="status">正在载入设置…</p></div>
   </main>
 </body>
 </html>

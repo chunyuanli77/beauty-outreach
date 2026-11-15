@@ -100,32 +100,25 @@ export function initSemantic({renderLeads, reloadLeads, currentLead}) {
     return result.verdict === filter.value;
   }
 
-  function cell(lead) {
+  function rowState(lead) {
     const result = summaries.get(lead.id);
-    const box = node('div');
-    if (result?.semanticAllowed && config?.configured) {
-      const label = node('label');
-      label.className = 'check';
-      const check = node('input');
-      check.type = 'checkbox';
-      check.checked = selected.has(lead.id);
-      check.setAttribute('aria-label', `选择 ${lead.username} 进行语义分析`);
-      check.addEventListener('change', () => {
-        if (check.checked && selected.size === 50) {
-          check.checked = false;
-          show('semantic-error', '每批最多选 50 条。');
-          return;
-        }
-        if (check.checked) selected.add(lead.id);
-        else selected.delete(lead.id);
-        updateControls();
-      });
-      label.append(check, node('span', '选择'));
-      box.append(label);
+    return {
+      selectable: result?.semanticAllowed && config?.configured,
+      checked: selected.has(lead.id),
+      label: !result ? '—' : result.status === 'SUCCEEDED'
+        ? (verdicts[result.verdict] || '待人工复核') : (states[result.status] || '未分析')
+    };
+  }
+
+  function setSelection(leadId, checked) {
+    if (checked && !selected.has(leadId) && selected.size >= 50) {
+      show('semantic-error', '每批最多选 50 条。');
+      return false;
     }
-    box.append(node('p', !result ? '—' : result.status === 'SUCCEEDED'
-      ? (verdicts[result.verdict] || '待人工复核') : (states[result.status] || '未分析')));
-    return box;
+    if (checked) selected.add(leadId);
+    else selected.delete(leadId);
+    updateControls();
+    return true;
   }
 
   async function showLead(id) {
@@ -257,5 +250,5 @@ export function initSemantic({renderLeads, reloadLeads, currentLead}) {
     if (Number.isSafeInteger(last) && last > 0) void follow(last);
   } catch { /* Storage is optional. */ }
 
-  return {cell, matches, loadSummaries, refresh, showLead};
+  return {rowState, setSelection, matches, loadSummaries, refresh, showLead};
 }

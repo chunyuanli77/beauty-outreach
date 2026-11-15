@@ -11,12 +11,16 @@
 <body>
   <header class="masthead"><div class="container masthead-inner"><a class="workbench-brand" href="/">触达工作台</a><nav class="workbench-nav" aria-label="工作台导航"><a href="/" aria-current="page">线索与入池</a><a href="/tasks.html">批量任务</a><a href="/audit.html">审计记录</a><a href="/settings.html">模板与频控</a></nav><span class="environment">WhatsApp Mock</span></div></header>
   <main class="container">
-    <div class="heading">
-      <div><h1>Instagram 线索</h1><p>导入有权处理的线索，按规则评分并确认目标池。</p></div>
-      <div class="actions"><button id="open-rules" type="button" disabled>评分规则</button><button id="score" class="primary" type="button" disabled>重新评分</button><a class="button-link" href="/tasks.html?new=1">创建批量任务</a></div>
-    </div>
+    <section class="page-intro lead-hero heading" aria-labelledby="lead-title">
+      <div class="hero-copy"><p class="eyebrow">线索筛选 · INSTAGRAM</p><h1 id="lead-title">Instagram 线索</h1><p>从线索导入、筛选入池，到可回溯的模拟触达。</p></div>
+      <div class="actions hero-actions"><button id="open-rules" type="button" disabled>评分规则</button><button id="score" class="primary" type="button" disabled>重新评分</button><a class="button-link" href="/tasks.html?new=1">创建批量任务</a></div>
+    </section>
 
+    <section class="lead-overview" id="lead-overview" aria-label="线索概况"></section>
+
+    <div class="lead-setup">
     <section class="panel import-panel" aria-labelledby="import-title">
+      <p class="lead-panel-step">01 / 导入</p>
       <div class="heading"><h2 id="import-title">导入线索</h2><a id="csv-template" download="instagram-leads.csv">下载 CSV 表头</a></div>
       <form id="import-form">
         <label for="lead-file">选择 CSV 或 JSON 文件</label>
@@ -28,6 +32,7 @@
     </section>
 
     <section class="panel import-panel" aria-labelledby="semantic-title">
+      <p class="lead-panel-step">02 / 分析</p>
       <div class="heading">
         <div><h2 id="semantic-title">DeepSeek 语义筛选</h2><p id="semantic-config" role="status">正在读取配置…</p></div>
         <div class="actions">
@@ -41,6 +46,7 @@
       <p class="message" id="semantic-progress" role="status" hidden></p>
       <p class="message error" id="semantic-error" role="alert" hidden></p>
     </section>
+    </div>
 
     <section class="panel records" aria-labelledby="records-title">
       <div class="heading toolbar">

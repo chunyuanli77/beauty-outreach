@@ -12,3 +12,7 @@ Python
   https://github.com/astral-sh/python-build-standalone
 
 Java application dependencies keep their notices in the application JAR and its nested libraries.
+
+Vue 3.5.45 browser runtime (MIT)
+  https://github.com/vuejs/core/releases/tag/v3.5.45
+  License: app/workbench.jar!/BOOT-INF/classes/static/vendor/vue-LICENSE.txt
